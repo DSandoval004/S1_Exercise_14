@@ -5,8 +5,8 @@
    Tutorial 12
    Tutorial Case
 
-   Author: 
-   Date:   
+   Author: Diego Sandoval
+   Date:   March 28, 2019 (03/28/19)
 
    Filename: bc_switch.js
    
@@ -16,4 +16,3 @@
    view and page view
    
 */
-
