@@ -26,10 +26,9 @@
 
 
 */
-
 // DDOES: Generate an outline based on h1 through h6 headings in the source document
 window.onload = makeOutline;
-
+// DFUNC:
 function makeOutline() {
       // DVARO: Location of the document outline 
       var outline = document.getElementById("outline");
@@ -43,4 +42,51 @@ function makeOutline() {
       mainHeading.appendChild(headingText);
       outline.appendChild(mainHeading);
       outline.appendChild(outlineList);
-}
+      // DDOES:
+      createList(source, outlineList);
+};
+// DFUNC:
+function createList(source, outlineList) {
+      // DVARA:
+      var headings = ["H1", "H2", "H3", "H4", "H5", "H6"];
+      // DVARN:
+      var prevLevel = 0;
+      // DDOES: Loop through all of the child nodes of source article until no child nodes are left
+      for (var n = source.firstChild; n !== null; n = n.nextSibling) {
+            // DVARA:
+            var headLevel = headings.indexOf(n.nodeName);
+            // DIFDO:  Examine only article headings
+            if (headLevel !== -1) {
+                  // DVARO:
+                  var listElem = document.createElement('li');
+                  // DDOES:
+                  listElem.innerHTML = n.firstChild.nodeValue;
+                  // DIFDO:
+                  if (headLevel === prevLevel) {
+                        // DDOES: Append the list item to the current list
+                        outlineList.appendChild(listElem);
+                  } else if (headLevel > prevLevel) {
+                        // DDOES: Start a new nested list
+                        var nestedList = document.createElement('ol');
+                        nestedList.appendChild(listElem);
+                        // DDOES:  Append nested list to last item in the current list
+                        outlineList.lastChild.appendChild(nestedList);
+                        // DDOES: Change the current list to the nested list
+                        outlineList = nestedList;
+                  } else {
+                        // DDOES: Append the list item to a higher list
+                        // DVARN: Calculate the difference between the current and previous level
+                        var levelup = prevLevel - headLevel;
+                        // DLOOP: Go up to the higher level
+                        for (var i = 1; i <= levelup; i++) {
+                              outlineList = outlineList.parentNode.parentNode;
+                        }
+                        // DDOES:
+                        outlineList.appendChild(listElem);
+                  }
+
+                  // DDOES: Update the value of prevLevel
+                  prevLevel = headLevel;
+            };
+      };
+};
