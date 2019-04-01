@@ -27,7 +27,7 @@
 
 */
 // DDOES: Generate an outline based on h1 through h6 headings in the source document
-window.onload = makeOutline;
+window.addEventListener('load', makeOutline);
 // DFUNC:
 function makeOutline() {
       // DVARO: Location of the document outline 
@@ -51,16 +51,27 @@ function createList(source, outlineList) {
       var headings = ["H1", "H2", "H3", "H4", "H5", "H6"];
       // DVARN:
       var prevLevel = 0;
+      // DVARN: Running total of the article headings 
+      var headNum = 0;
       // DDOES: Loop through all of the child nodes of source article until no child nodes are left
       for (var n = source.firstChild; n !== null; n = n.nextSibling) {
             // DVARA:
             var headLevel = headings.indexOf(n.nodeName);
             // DIFDO:  Examine only article headings
             if (headLevel !== -1) {
+                  // DIFDO: Add an id to the heading if it is missing
+                  headNum++;
+                  if (n.hasAttribute('id') === false) {
+                        n.setAttribute('id', 'head' + headNum);
+                  }
                   // DVARO:
                   var listElem = document.createElement('li');
-                  // DDOES:
-                  listElem.innerHTML = n.firstChild.nodeValue;
+                  // DDOES: Create hypertext links to the document headings
+                  var linkElem = document.createElement('a');
+                  linkElem.innerHTML = n.innerHTML;
+                  linkElem.setAttribute('href', '#' + n.id);
+                  // DDOES: Append the hypertext link to the list item
+                  listElem.appendChild(linkElem);
                   // DIFDO:
                   if (headLevel === prevLevel) {
                         // DDOES: Append the list item to the current list
@@ -70,6 +81,7 @@ function createList(source, outlineList) {
                         var nestedList = document.createElement('ol');
                         nestedList.appendChild(listElem);
                         // DDOES:  Append nested list to last item in the current list
+                        console.log(outlineList.lastChild)
                         outlineList.lastChild.appendChild(nestedList);
                         // DDOES: Change the current list to the nested list
                         outlineList = nestedList;
